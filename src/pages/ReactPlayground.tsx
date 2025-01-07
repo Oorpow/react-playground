@@ -1,8 +1,22 @@
+import { Allotment } from "allotment"
+import 'allotment/dist/style.css'
+
+import PlaygroundHeader from "../components/PlaygroundHeader";
+import CodeEditor from "../components/CodeEditor";
+import CodePreview from "../components/CodePreview";
+
 function ReactPlayground() {
-    return <div className="">
-        <header>
-            <h1>Encore Playground</h1>
-        </header>
+    return <div className="min-h-screen h-screen">
+        <PlaygroundHeader />
+        {/* 100 100，即1:1的比例展示 */}
+        <Allotment defaultSizes={[100, 100]}>
+            <Allotment.Pane minSize={500}>
+                <CodeEditor />
+            </Allotment.Pane>
+            <Allotment.Pane minSize={0}>
+                <CodePreview />
+            </Allotment.Pane>
+        </Allotment>
     </div>;
 }
 

@@ -54,3 +54,14 @@ npm install @monaco-editor/react
 - `iframe` + 通信机制
 - 代码编辑器将结果用babel编译后，传到iframe渲染
 - 在预览生成的内容时，url同样是将内容内嵌到src，生成blob url
+
+
+## 布局
+
+### 编辑器和预览部分宽度拖拽实现
+
+原理
+- absolute 布局，拖动时改变width
+
+现成库: `allotment`
+
