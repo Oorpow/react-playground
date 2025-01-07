@@ -7,7 +7,7 @@ function EditFileList() {
     </div>
 }
 
-function CodeEditor() {
+function EditorWrapper() {
     const file: EditorFile = {
         name: 'index.tsx',
         value: 'import lodash from "lodash";\n\nconst a = <div>guang</div>',
@@ -25,4 +25,4 @@ function CodeEditor() {
     </div>;
 }
 
-export default CodeEditor;
+export default EditorWrapper;

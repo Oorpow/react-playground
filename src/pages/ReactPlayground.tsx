@@ -2,7 +2,7 @@ import { Allotment } from "allotment"
 import 'allotment/dist/style.css'
 
 import PlaygroundHeader from "../components/PlaygroundHeader";
-import CodeEditor from "../components/CodeEditor";
+import EditorWrapper from "../components/EditorWrapper";
 import CodePreview from "../components/CodePreview";
 
 function ReactPlayground() {
@@ -11,7 +11,7 @@ function ReactPlayground() {
         {/* 100 100，即1:1的比例展示 */}
         <Allotment defaultSizes={[100, 100]}>
             <Allotment.Pane minSize={500}>
-                <CodeEditor />
+                <EditorWrapper />
             </Allotment.Pane>
             <Allotment.Pane minSize={0}>
                 <CodePreview />
