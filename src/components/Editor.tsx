@@ -1,4 +1,4 @@
-import MonacoEditor, { OnMount } from '@monaco-editor/react';
+import MonacoEditor, { EditorProps, OnMount } from '@monaco-editor/react';
 import { setupTypeAcquisition } from '@typescript/ata'
 import typescript from 'typescript'
 
@@ -15,7 +15,7 @@ function createATA(onDownloadFile: (code: string, path: string) => void) {
         logger: console,
         delegate: {
             receivedFile: (code, path) => {
-                console.log('自动下载包: ', path)
+                // console.log('自动下载包: ', path)
                 onDownloadFile(code, path)
             }
         }
@@ -24,13 +24,20 @@ function createATA(onDownloadFile: (code: string, path: string) => void) {
     return ata
 }
 
+export interface EditorFile {
+    name: string
+    value: string
+    language: string
+}
+
+interface Props {
+    file: EditorFile
+    onChange?: EditorProps['onChange']
+}
+
 /* 编辑器 */
-function Editor() {
-	const code = `
-    export default function App() {
-        return <div>hahahah</div>
-    }
-    `;
+function Editor(props: Props) {
+    const { file, onChange } = props
 
 	const editorOnMount: OnMount = (editor, monaco) => {
 		monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
@@ -58,8 +65,6 @@ function Editor() {
 	return (
 		<MonacoEditor
 			height="100%"
-			path="test.tsx"
-			language="typescript"
 			options={{
 				scrollBeyondLastLine: false,
 				minimap: {
@@ -70,8 +75,11 @@ function Editor() {
 					horizontalScrollbarSize: 6,
 				},
 			}}
-			value={code}
+            path={file.name}
+			language={file.language}
+			value={file.value}
 			onMount={editorOnMount}
+            onChange={onChange}
 		/>
 	);
 }
