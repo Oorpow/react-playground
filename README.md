@@ -64,4 +64,3 @@ npm install @monaco-editor/react
 - absolute 布局，拖动时改变width
 
 现成库: `allotment`
-
