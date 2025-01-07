@@ -48,6 +48,74 @@ URL.createObjectURL(new Blob([code], { type: 'application/javascript' }))
 npm install @monaco-editor/react
 ```
 
+#### tsconfig 配置
+
+> 处理jsx报错
+
+```jsx
+const editorOnMount: OnMount = (editor, monaco) => {
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        jsx: monaco.languages.typescript.JsxEmit.Preserve, // 处理tsconfig对jsx的报错
+        esModuleInterop: true,
+    });
+};
+```
+
+#### 快捷行为
+
+```jsx
+const editorOnMount: OnMount = (editor, monaco) => {
+    // 快捷键（CMD + K）实现代码格式化
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, () => {
+        // 底层是执行预设好的action
+        editor.getAction('editor.action.formatDocument')?.run();
+    });
+};
+```
+
+#### 引入第三方包没提示
+
+核心库: `@typescript/ata`
+
+```js
+/**
+ * ata(自动类型获取)
+ * 通过传入源码，自动分析出需要的ts类型包，然后自动下载
+ * @param onDownloadFile 
+ * @returns 
+ */
+function createATA(onDownloadFile: (code: string, path: string) => void) {
+    const ata = setupTypeAcquisition({
+        projectName: 'test-ata',
+        typescript,
+        logger: console,
+        delegate: {
+            receivedFile: (code, path) => {
+                console.log('自动下载包: ', path)
+                onDownloadFile(code, path)
+            }
+        }
+    })
+
+    return ata
+}
+```
+
+```jsx
+const editorOnMount: OnMount = (editor, monaco) => {
+    const ata = createATA((code, path) => {
+        // 类型获取完后，通过addExtraLib加到ts里
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(code, `file://${path}`)
+    })
+    // 代码内容发生改变后，再获取一次ts类型
+    editor.onDidChangeModelContent(() => {
+        ata(editor.getValue())
+    })
+    // 一开始就获取一次类型
+    ata(editor.getValue())
+};
+```
+
 ### 代码预览
 
 原理: 
