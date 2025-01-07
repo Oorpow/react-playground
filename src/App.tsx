@@ -1,11 +1,11 @@
-// import './App.css';
+import ReactPlayground from './pages/ReactPlayground';
 
 function App() {
 
 	return (
 		<>
-      {/* <button onClick={handleClick}>编译</button> */}
-		</>
+      <ReactPlayground />
+    </>
 	);
 }
 
