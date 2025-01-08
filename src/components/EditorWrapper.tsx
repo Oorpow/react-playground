@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { debounce } from 'lodash-es';
 import Editor from './Editor';
 import EditorFileList from './EditorFileList';
 import { PlaygroundContext } from '../store/PlaygroundContext';
@@ -17,7 +18,7 @@ function EditorWrapper() {
 	return (
 		<div className="flex flex-col h-full">
 			<EditorFileList />
-			<Editor file={file} onChange={onEditorValueChange} />
+			<Editor file={file} onChange={debounce(onEditorValueChange, 500)} />
 		</div>
 	);
 }
