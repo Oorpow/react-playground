@@ -15,7 +15,7 @@ export const IMPORT_MAP_FILE_NAME = 'import-map.json'
 export const ENTRY_FILE_NAME = 'main.tsx'
 
 /**
- * 提供初始化文件区
+ * 初始化文件区
  */
 export const initFiles: Files = {
     [ENTRY_FILE_NAME]: {
