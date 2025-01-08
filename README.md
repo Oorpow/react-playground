@@ -123,6 +123,27 @@ const editorOnMount: OnMount = (editor, monaco) => {
 - 代码编辑器将结果用babel编译后，传到iframe渲染
 - 在预览生成的内容时，url同样是将内容内嵌到src，生成blob url
 
+### 多文件切换和文件区操作
+
+> 涉及到多组件数据共享的问题，可以使用Context实现
+
+文件区数据结构：
+
+```js
+{
+    'App.vue': {
+        name: 'App.vue',
+        value: '<template><div>app</div></template>',
+        language: 'vue'
+    }
+}
+```
+
+多组件共享的数据：
+- 文件区
+- 选中的文件
+- 文件区的操作方法
+
 
 ## 布局
 

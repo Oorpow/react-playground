@@ -10,7 +10,7 @@ function EditFileList() {
 function EditorWrapper() {
     const file: EditorFile = {
         name: 'index.tsx',
-        value: 'import lodash from "lodash";\n\nconst a = <div>guang</div>',
+        value: 'import lodash from "lodash";\n\nconst a = <div>last</div>',
         language: 'typescript'
     }
 
