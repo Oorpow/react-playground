@@ -1,4 +1,4 @@
-import { PlaygroundProvider } from './components/PlaygroundContext';
+import { PlaygroundProvider } from './store/PlaygroundContext';
 import ReactPlayground from './pages/ReactPlayground';
 
 function App() {
