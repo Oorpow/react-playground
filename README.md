@@ -144,6 +144,43 @@ const editorOnMount: OnMount = (editor, monaco) => {
 - 选中的文件
 - 文件区的操作方法
 
+### 预览区iframe渲染
+
+原理：
+- 定义一个iframe html文件，提供import maps机制和src内容区
+- 替换import maps
+- 将编译后的代码，填充到src内容区
+- 创建blob url，设置到iframe的src属性，完成渲染
+
+```html
+<body>
+    <script type="importmap"></script>
+    <script type="module" id="appSrc"></script>
+    <div id="root"></div>
+</body>
+```
+
+```jsx
+import iframeRaw from 'iframe.html?raw'
+
+const [iframeUrl, setIframeUrl] = useState(getIframeUrl())
+
+function getIframeUrl() {
+    const res = iframeRaw
+        .replace(
+            '<script type="importmap"></script>',
+            `<script type="importmap">${files[IMPORT_MAP_FILE_NAME].value}</script>`
+        )
+        .replace(
+            '<script type="module" id="appSrc"></script>',
+            // compiledCode babel编译后的代码
+            `<script type="module" id="appSrc">${compiledCode}</script>`
+        );
+    return URL.createObjectURL(new Blob([res], { type: 'text/html' }));
+};
+
+<iframe src={iframeUrl} />
+```
 
 ## 布局
 
