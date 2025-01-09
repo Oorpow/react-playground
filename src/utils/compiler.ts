@@ -1,7 +1,7 @@
 import { transform } from '@babel/standalone';
 import { PluginObj } from '@babel/core';
 import { Files } from '../store/PlaygroundContext';
-import { APP_COMPONENT_FILE_NAME } from './provideFiles';
+import { ENTRY_FILE_NAME } from './provideFiles';
 import { EditorFile } from '../components/Editor';
 
 /**
@@ -55,13 +55,14 @@ function json2Js(file: EditorFile) {
  */
 function css2Js(file: EditorFile) {
 	const randomId = new Date().getTime();
+
 	const js = `
     (() => {
         const stylesheet = document.createElement('style')
         stylesheet.setAttribute('id', 'style_${randomId}_${file.name}')
         document.head.appendChild(stylesheet)
 
-        const styles = document.createElement(\`${file.value}\`)
+        const styles = document.createTextNode(\`${file.value}\`)
         stylesheet.innerHTML = ''
         stylesheet.appendChild(styles)
     })()
@@ -87,7 +88,7 @@ export function customResolver(files: Files): PluginObj {
 					const file = getModuleFile(files, modulePath);
 					if (!file) return;
 
-                    // css、tsx、.jso类的依赖，都通过blob url引入，第三方包会通过import maps引入
+					// css、tsx、.jso类的依赖，都通过blob url引入，第三方包会通过import maps引入
 					if (file.name.endsWith('.css')) {
 						path.node.source.value = css2Js(file);
 					} else if (file.name.endsWith('.json')) {
@@ -108,22 +109,23 @@ export function customResolver(files: Files): PluginObj {
 	};
 }
 
-
 /**
  * 在babel转换前，判断文件是否有import react，如果没有则帮助引入
- * @param filename 
- * @param code 
- * @returns 
+ * @param filename
+ * @param code
+ * @returns
  */
 export const beforeBabelTransform = (filename: string, code: string) => {
-    let _code = code
-    const regexReact = /import\s+React/g
-
-    if ((filename.endsWith('.jsx') || filename.endsWith('.tsx') && !regexReact.test(code))) {
-        _code = `import React from 'react';\n${code}`
-    }
-    return _code
-}
+	let _code = code;
+	const regexReact = /import\s+React/g;
+	if (
+		(filename.endsWith('.jsx') || filename.endsWith('.tsx')) &&
+		!regexReact.test(code)
+	) {
+		_code = `import React from 'react';\n${code}`;
+	}
+	return _code;
+};
 
 /**
  * babel编译
@@ -138,7 +140,7 @@ export const babelTransform = (
 	code: string,
 	files: Files
 ) => {
-    const _code = beforeBabelTransform(filename, code)
+	const _code = beforeBabelTransform(filename, code);
 	let result = '';
 
 	try {
@@ -155,6 +157,6 @@ export const babelTransform = (
 };
 
 export const compile = (files: Files) => {
-	const app = files[APP_COMPONENT_FILE_NAME];
-	return babelTransform(APP_COMPONENT_FILE_NAME, app.value, files);
+	const app = files[ENTRY_FILE_NAME];
+	return babelTransform(ENTRY_FILE_NAME, app.value, files);
 };
