@@ -14,7 +14,7 @@ function FileItem(props: FileItemProps) {
 	return (
 		<div
 			onClick={onClick}
-			className={`p-2 transition duration-200 cursor-pointer ${
+			className={`p-2 transition duration-200 ease-in-out cursor-pointer ${
 				isActive ? 'border-b-2 border-red-500' : 'border-b-0'
 			}`}
 		>
