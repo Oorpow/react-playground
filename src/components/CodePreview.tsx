@@ -1,27 +1,57 @@
-import Editor from './Editor';
+// import Editor from './Editor';
+import iframeRaw from '../assets/iframe.html?raw';
 import { useContext, useState, useEffect } from 'react';
 import { PlaygroundContext } from '../store/PlaygroundContext';
 import { compile } from '../utils/compiler';
+import { IMPORT_MAP_FILE_NAME } from '../utils/provideFiles';
 
 function CodePreview() {
 	const { files } = useContext(PlaygroundContext);
 	const [compiledCode, setCompiledCode] = useState('');
+	const [iframeUrl, setIframeUrl] = useState(getIframeUrl());
 
-    // files发生变化时，对内容做编译，并展示编译后的代码
+	// files发生变化时，对内容做编译，得到编译后的js代码
 	useEffect(() => {
 		const result = compile(files);
 		setCompiledCode(result);
 	}, [files]);
 
+    /**
+     * 替换iframe页中的import maps、src的内容
+     * 创建blob url设置到src中，完成iframe渲染
+     * @returns 
+     */
+	function getIframeUrl() {
+		const res = iframeRaw
+			.replace(
+				'<script type="importmap"></script>',
+				`<script type="importmap">${files[IMPORT_MAP_FILE_NAME].value}</script>`
+			)
+			.replace(
+				'<script type="module" id="appSrc"></script>',
+				`<script type="module" id="appSrc">${compiledCode}</script>`
+			);
+		return URL.createObjectURL(new Blob([res], { type: 'text/html' }));
+	};
+
+	useEffect(() => {
+		setIframeUrl(getIframeUrl());
+	}, [files[IMPORT_MAP_FILE_NAME].value, compiledCode]);
+
+
 	return (
 		<div className="h-full">
-			<Editor
+			<iframe
+				src={iframeUrl}
+                className='w-full h-full p-0 border-none '
+			/>
+			{/* <Editor
 				file={{
 					name: 'dist.js',
 					value: compiledCode,
 					language: 'javascript',
 				}}
-			/>
+			/> */}
 		</div>
 	);
 }
