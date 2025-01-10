@@ -3,6 +3,9 @@ import { EditorFile } from '../components/Editor';
 import { fileName2Language } from '../utils/fileName2Language';
 import { initFiles } from '../utils/provideFiles';
 
+/**
+ * 数据结构 'App.tsx': { name: 'App.tsx', value: '<div></div>', language: 'tsx' }
+ */
 export interface Files {
 	[key: string]: EditorFile;
 }
