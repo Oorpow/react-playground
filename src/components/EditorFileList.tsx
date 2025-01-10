@@ -1,6 +1,13 @@
-import { useContext, useEffect, useRef, useState } from 'react';
-import { Plus } from 'lucide-react';
+import {
+	MouseEventHandler,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
+import { CircleX, Plus } from 'lucide-react';
 import { PlaygroundContext } from '../store/PlaygroundContext';
+import { APP_COMPONENT_FILE_NAME, ENTRY_FILE_NAME, IMPORT_MAP_FILE_NAME } from '../utils/provideFiles';
 
 export interface FileItemProps {
 	/** 文件名 */
@@ -9,6 +16,8 @@ export interface FileItemProps {
 	isActive: boolean;
 	/** 是否点击创建按钮，添加文件至文件区 */
 	isCreating: boolean;
+	/** 标识无法被删除的文件 */
+	isReadonly: boolean;
 	onClick: () => void;
 	/**
 	 * 编辑事件
@@ -16,15 +25,18 @@ export interface FileItemProps {
 	 * @returns
 	 */
 	onEditFinished: (name: string) => void;
+	onRemove: MouseEventHandler;
 }
 
 function FileItem(props: FileItemProps) {
 	const {
 		value,
-		onClick,
 		isActive = false,
 		isCreating: propsIsCreating,
+		isReadonly,
+		onClick,
 		onEditFinished,
+		onRemove,
 	} = props;
 	// 文件名
 	const [name, setName] = useState(value);
@@ -67,7 +79,10 @@ function FileItem(props: FileItemProps) {
 					onBlur={handleBlur}
 				/>
 			) : (
-				<span onDoubleClick={handleDoubleClick}>{name}</span>
+				<div className="flex gap-1">
+					<span onDoubleClick={!isReadonly ? handleDoubleClick : () => {}}>{name}</span>
+					{isActive && !isReadonly && <CircleX onClick={onRemove} />}
+				</div>
 			)}
 		</div>
 	);
@@ -85,6 +100,9 @@ function EditorFileList() {
 
 	const [tabs, setTabs] = useState(['']);
 	const [isCreating, setIsCreating] = useState(false);
+
+	// 只读的文件列表
+	const readonlyFiles = [ENTRY_FILE_NAME, IMPORT_MAP_FILE_NAME, APP_COMPONENT_FILE_NAME]
 
 	useEffect(() => {
 		// 文件名作为tabs数组项
@@ -114,6 +132,15 @@ function EditorFileList() {
 		setIsCreating(true);
 	}
 
+	/**
+	 * 从文件区删除文件
+	 * @param name 
+	 */
+	function handleRemoveFile(name: string) {
+		deleteFile(name)
+		setSelectedFileName(ENTRY_FILE_NAME)
+	}
+
 	return (
 		<div className="flex items-center m-1 overflow-x-auto overflow-y-hidden flex-nowrap">
 			{tabs.map((item, idx, arr) => {
@@ -127,10 +154,15 @@ function EditorFileList() {
 						isActive={selectedFileName === item}
 						// 默认将最后一个tab作为编辑状态
 						isCreating={isCreating && idx === arr.length - 1}
+						isReadonly={readonlyFiles.includes(item)}
 						onClick={() => setSelectedFileName(item)}
 						onEditFinished={(name: string) =>
 							handleEditFinished(item, name)
 						}
+						onRemove={(e) => {
+							e.stopPropagation()
+							handleRemoveFile(item)
+						}}
 					/>
 				);
 			})}
