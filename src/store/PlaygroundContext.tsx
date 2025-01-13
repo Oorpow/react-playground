@@ -10,17 +10,22 @@ export interface Files {
 	[key: string]: EditorFile;
 }
 
+export type Theme = 'light' | 'dark'
+
 export interface PlaygroundContextProps {
 	files: Files;
 	selectedFileName: string;
 	setSelectedFileName: (fileName: string) => void;
-	// 设置当前正在编辑的文件
+    /** 设置当前正在编辑的文件 */
 	setFiles: (files: Files) => void;
-	// 文件区添加文件
+    /** 文件区添加文件 */
 	addFile: (fileName: string) => void;
 	deleteFile: (fileName: string) => void;
-	// 更新文件
+	/** 更新文件 */ 
 	updateFileName: (oldFileName: string, newFileName: string) => void;
+    /** 主题 */
+    theme: Theme
+    setTheme: (theme: Theme) => void
 }
 
 export const PlaygroundContext = createContext<PlaygroundContextProps>({
@@ -43,6 +48,7 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
      */
 	const [files, setFiles] = useState<Files>(initFiles);
 	const [selectedFileName, setSelectedFileName] = useState('App.tsx');
+    const [theme, setTheme] = useState<Theme>('light')
 
 	const addFile = (name: string) => {
         files[name] = {
@@ -86,6 +92,8 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 				addFile,
 				deleteFile,
 				updateFileName,
+                theme,
+                setTheme
 			}}
 		>
 			{children}

@@ -33,11 +33,12 @@ export interface EditorFile {
 interface Props {
     file: EditorFile
     onChange?: EditorProps['onChange']
+    options?: Record<string, unknown>
 }
 
 /* 编辑器 */
 function Editor(props: Props) {
-    const { file, onChange } = props
+    const { file, onChange, options } = props
 
 	const editorOnMount: OnMount = (editor, monaco) => {
 		monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
@@ -74,6 +75,7 @@ function Editor(props: Props) {
 					verticalScrollbarSize: 6,
 					horizontalScrollbarSize: 6,
 				},
+                ...options
 			}}
             path={file.name}
 			language={file.language}

@@ -7,7 +7,11 @@ import {
 } from 'react';
 import { CircleX, Plus } from 'lucide-react';
 import { PlaygroundContext } from '../store/PlaygroundContext';
-import { APP_COMPONENT_FILE_NAME, ENTRY_FILE_NAME, IMPORT_MAP_FILE_NAME } from '../utils/provideFiles';
+import {
+	APP_COMPONENT_FILE_NAME,
+	ENTRY_FILE_NAME,
+	IMPORT_MAP_FILE_NAME,
+} from '../utils/provideFiles';
 
 export interface FileItemProps {
 	/** 文件名 */
@@ -80,7 +84,14 @@ function FileItem(props: FileItemProps) {
 				/>
 			) : (
 				<div className="flex gap-1">
-					<span onDoubleClick={!isReadonly ? handleDoubleClick : () => {}}>{name}</span>
+					<span
+						onDoubleClick={
+							!isReadonly ? handleDoubleClick : () => {}
+						}
+					>
+						{name}
+					</span>
+					{/* 选中状态、且该文件非只读的情况下，允许删除 */}
 					{isActive && !isReadonly && <CircleX onClick={onRemove} />}
 				</div>
 			)}
@@ -102,7 +113,11 @@ function EditorFileList() {
 	const [isCreating, setIsCreating] = useState(false);
 
 	// 只读的文件列表
-	const readonlyFiles = [ENTRY_FILE_NAME, IMPORT_MAP_FILE_NAME, APP_COMPONENT_FILE_NAME]
+	const readonlyFiles = [
+		ENTRY_FILE_NAME,
+		IMPORT_MAP_FILE_NAME,
+		APP_COMPONENT_FILE_NAME,
+	];
 
 	useEffect(() => {
 		// 文件名作为tabs数组项
@@ -134,15 +149,15 @@ function EditorFileList() {
 
 	/**
 	 * 从文件区删除文件
-	 * @param name 
+	 * @param name
 	 */
 	function handleRemoveFile(name: string) {
-		deleteFile(name)
-		setSelectedFileName(ENTRY_FILE_NAME)
+		deleteFile(name);
+		setSelectedFileName(ENTRY_FILE_NAME);
 	}
 
 	return (
-		<div className="flex items-center m-1 overflow-x-auto overflow-y-hidden flex-nowrap">
+		<div className="flex items-center overflow-x-auto overflow-y-hidden flex-nowrap dark:bg-slate-900 dark:text-white">
 			{tabs.map((item, idx, arr) => {
 				// 如果不过滤空值，则会导致首次渲染时，第一项不渲染
 				if (!item) return null;
@@ -160,8 +175,8 @@ function EditorFileList() {
 							handleEditFinished(item, name)
 						}
 						onRemove={(e) => {
-							e.stopPropagation()
-							handleRemoveFile(item)
+							e.stopPropagation();
+							handleRemoveFile(item);
 						}}
 					/>
 				);
