@@ -2,6 +2,7 @@ import { createContext, PropsWithChildren, useEffect, useState } from 'react';
 import { EditorFile } from '../components/Editor';
 import { fileName2Language } from '../utils/fileName2Language';
 import { initFiles } from '../utils/provideFiles';
+import { urlCompress, urlUncompressed } from '../utils/compress';
 
 /**
  * 数据结构 'App.tsx': { name: 'App.tsx', value: '<div></div>', language: 'tsx' }
@@ -84,8 +85,11 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 
     // 将文件内容作为url的一部分，用于链接分享
 	useEffect(() => {
-		const hash = JSON.stringify(files);
-		window.location.hash = encodeURIComponent(hash);
+		// const hash = JSON.stringify(files);
+		// window.location.hash = encodeURIComponent(hash);
+        // 经过压缩优化
+        const hash = urlCompress(JSON.stringify(files))
+        window.location.hash = hash
 	}, [files]);
 
     /**
@@ -95,7 +99,8 @@ export const PlaygroundProvider = (props: PropsWithChildren) => {
 	function getFilesFromUrl() {
 		let files: Files | undefined;
 		try {
-			const hash = decodeURIComponent(window.location.hash.slice(1));
+			// const hash = decodeURIComponent(window.location.hash.slice(1));
+            const hash = urlUncompressed(window.location.hash.slice(1))
 			files = JSON.parse(hash);
 		} catch (error) {
 			console.error(error);
